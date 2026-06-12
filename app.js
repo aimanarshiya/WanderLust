@@ -18,6 +18,7 @@ app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+const session = require("express-session");
 
 main()
   .then(() => console.log("Connected to Database"))
@@ -26,6 +27,15 @@ main()
 async function main() {
   await mongoose.connect(MONGO_URL);
 }
+// expresss sessions
+const sessionOptions = {
+  secret :"mysupersecretcode",
+  resave : false,
+  saveUninitialized : true
+}
+
+app.use(session(sessionOptions));
+
 
 app.get("/", (req, res) => {
   res.send("Hi, I am root Working here");
