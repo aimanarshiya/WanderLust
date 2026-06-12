@@ -19,6 +19,8 @@ app.use(express.static(path.join(__dirname, "/public")));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 const session = require("express-session");
+const flash = require("connect-flash");
+
 
 main()
   .then(() => console.log("Connected to Database"))
@@ -40,7 +42,12 @@ const sessionOptions = {
 }
 
 app.use(session(sessionOptions));
+app.use(flash());
 
+app.use((req,res,next)=> {
+  res.locals.success = req.flash("success");
+  next();
+})
 
 app.get("/", (req, res) => {
   res.send("Hi, I am root Working here");
