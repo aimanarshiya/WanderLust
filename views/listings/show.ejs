@@ -11,6 +11,7 @@
             <div class="card mt-3">
                 <div class="card-body">
                     <ul class="list-unstyled">
+                        <li><b>Owner:</b> <%= listing.owner.username %></li>
                         <li><b>Description:</b> <%= listing.description %></li>
                         <li><b>Price:</b> &#8377; <%= listing.price ? listing.price.toLocaleString("en-IN") : "N/A" %> / night</li>
                         <li><b>Location:</b> <%= listing.location %></li>
@@ -19,33 +20,34 @@
                 </div>
             </div>
 
-            <div class="mt-3 d-flex gap-2">
-                <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark edit-btn">Edit</a>
-                <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
-                    <button class="btn btn-danger">Delete</button>
-                </form>
-            </div>
+            <!-- Edit/Delete only for owner -->
+            <% if (currUser && listing.owner && listing.owner._id.equals(currUser._id)) { %>
+                <div class="mt-3 d-flex gap-2">
+                    <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark">Edit</a>
+                    <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
+                        <button class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            <% } %>
 
-            <!-- Review Form -->
+            <!-- Review Form — only for logged in users -->
             <hr/>
-            <h4 class="mt-4">Leave a Review</h4>
-            <form method="POST" action="/listings/<%= listing._id %>/reviews" class="needs-validation" novalidate >
-
-                <div class="mb-3">
-                    <label for="rating" class="form-label">Rating &nbsp; <b id="ratingVal">3</b> / 5</label>
-                    <input type="range" id="rating" name="review[rating]" min="1" max="5" value="3" class="form-range" required
-                        oninput="document.getElementById('ratingVal').innerText = this.value" />
-                </div>
-
-                <div class="mb-3">
-                    <label for="comment" class="form-label">Comment</label>
-                    <textarea id="comment" name="review[comment]" rows="4" class="form-control" placeholder="Share your experience..." required></textarea>
-                    <div class="invalid-feedback">Please write a comment.</div>
-                </div>
-
-                <button class="btn btn-dark">Submit Review</button>
-
-            </form>
+            <% if (currUser) { %>
+                <h4 class="mt-4">Leave a Review</h4>
+                <form method="POST" action="/listings/<%= listing._id %>/reviews" class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <label for="rating" class="form-label">Rating &nbsp; <b id="ratingVal">3</b> / 5</label>
+                        <input type="range" id="rating" name="review[rating]" min="1" max="5" value="3" class="form-range" required
+                            oninput="document.getElementById('ratingVal').innerText = this.value" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="comment" class="form-label">Comment</label>
+                        <textarea id="comment" name="review[comment]" rows="4" class="form-control" placeholder="Share your experience..." required></textarea>
+                        <div class="invalid-feedback">Please write a comment.</div>
+                    </div>
+                    <button class="btn btn-dark">Submit Review</button>
+                </form>
+            <% } %>
 
             <!-- All Reviews -->
             <hr/>
@@ -61,10 +63,12 @@
                                 <div class="card-body">
                                     <p class="card-text">⭐ <b><%= review.rating %> / 5</b></p>
                                     <p class="card-text"><%= review.comment %></p>
-                                    <small class="text-muted"><%= review.createdAt.toDateString() %></small>
-                                    <form method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
-                                        <button class="btn btn-sm btn-danger mt-2">Delete</button>
-                                    </form>
+                                    <small class="text-muted"><b><%= review.author.username %></b> · <%= review.createdAt.toDateString() %></small>
+                                    <% if (currUser && review.author._id.equals(currUser._id)) { %>
+                                        <form method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
+                                            <button class="btn btn-sm btn-danger mt-2">Delete</button>
+                                        </form>
+                                    <% } %>
                                 </div>
                             </div>
                         </div>
