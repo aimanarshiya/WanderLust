@@ -79,9 +79,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.get("/", (req, res) => {
-//   res.send("Hi, I am root Working here");
-// });
+app.get("/", (req, res) => {
+  res.redirect("/listings");
+});
 
 app.use("/", userRouter);
 app.use("/listings", listingRouter);
