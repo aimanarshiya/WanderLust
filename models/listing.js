@@ -38,6 +38,10 @@ image: {
     type: { type: String, enum: ["Point"], default: "Point" },
     coordinates: { type: [Number] },
 },
+category: {
+    type: String,
+    enum: ["Trending", "Rooms", "Mountains", "Pools", "Beach", "Castles", "Camping", "Farms", "Arctic"],
+},
 });
 
 // handling lisitng deletions

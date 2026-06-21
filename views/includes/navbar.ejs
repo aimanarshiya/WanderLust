@@ -1,9 +1,12 @@
 <nav class="navbar navbar-expand-md navbar-light bg-light sticky-top">
   
   <div class="container-fluid">
-    
+    <form class="d-flex mx-auto" action="/listings/search" method="GET" role="search">
+    <input class="form-control me-2" type="search" name="q" placeholder="Search by location, country or title" aria-label="Search">
+    <button class="btn btn-outline-dark" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+</form>
 
-    <a class="navbar-brand" href="/"><i class="fa-regular fa-compass"></i>WanderLust</a>
+    <a class="navbar-brand" href="/listings"><i class="fa-regular fa-compass"></i></a>
 
     <button
       class="navbar-toggler"
@@ -16,19 +19,22 @@
 
     <div class="collapse navbar-collapse" id="navbarNav">
       <div class="navbar-nav">
-        <a class="nav-link" href="/">Home</a>
-        <a class="nav-link" href="/listings">All Listings</a>
-        <a class="nav-link" href="/listings/new">Add Listing</a>
+        <a class="nav-link" href="/listings">Explore</a>
       </div>
     </div>
 
     <div class="navbar-nav ms-auto">
-    <% if (currUser) { %>
+    <a class="nav-link" href="/listings/new">Airbnb your Home</a>
+    <% if (locals.currUser) { %>
         <span class="navbar-text me-3">Welcome, <%= currUser.username %>!</span>
-        <a href="/logout" class="nav-link">Logout</a>
+        <div class="form-check form-switch d-flex align-items-center ms-3">
+    <input class="form-check-input me-2" type="checkbox" id="switchCheck" onclick="taxSwitchFunc()">
+    <label class="form-check-label" for="switchCheck">Display total after taxes</label>
+</div>
+        <a href="/logout" class="nav-link"><b>Logout</b></a>
     <% } else { %>
-        <a href="/signup" class="nav-link">Signup</a>
-        <a href="/login" class="nav-link">Login</a>
+        <a href="/signup" class="nav-link"><b>Signup</b></a>
+        <a href="/login" class="nav-link"><b>Login</b></a>
     <% } %>
 </div>
 

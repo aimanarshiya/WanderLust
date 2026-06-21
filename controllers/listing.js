@@ -3,8 +3,14 @@ const NodeGeocoder = require("node-geocoder");
 const geocoder = NodeGeocoder({ provider: "openstreetmap" });
 
 module.exports.index = async (req, res) => {
-    const allListings = await Listing.find({});
-    res.render("listings/index.ejs", { allListings });
+    let { category } = req.query;
+    let allListings;
+    if (category) {
+        allListings = await Listing.find({ category });
+    } else {
+        allListings = await Listing.find({});
+    }
+    res.render("listings/index.ejs", { allListings, category });
 };
 
 module.exports.renderNewForm = (req, res) => {
@@ -21,6 +27,30 @@ module.exports.showListing = async (req, res) => {
         return res.redirect("/listings");
     }
     res.render("listings/show.ejs", { listing });
+};
+
+module.exports.searchListings = async (req, res) => {
+    let { q } = req.query;
+    
+    if (!q) {
+        req.flash("error", "Please enter something to search!");
+        return res.redirect("/listings");
+    }
+
+    const allListings = await Listing.find({
+        $or: [
+            { title: { $regex: q, $options: "i" } },
+            { location: { $regex: q, $options: "i" } },
+            { country: { $regex: q, $options: "i" } },
+        ],
+    });
+
+    if (allListings.length === 0) {
+        req.flash("error", "No listings found matching your search!");
+        return res.redirect("/listings");
+    }
+
+    res.render("listings/index.ejs", { allListings });
 };
 
 module.exports.createListing = async (req, res) => {
